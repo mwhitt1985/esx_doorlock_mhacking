@@ -1,47 +1,31 @@
-ESX				= nil
-local DoorInfo	= {}
+ESX = nil
+local doorState = {}
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 RegisterServerEvent('esx_doorlock:updateState')
-AddEventHandler('esx_doorlock:updateState', function(doorID, state)
+AddEventHandler('esx_doorlock:updateState', function(doorIndex, state)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
-	if type(doorID) ~= 'number' then
-		print(('esx_doorlock: %s didn\'t send a number!'):format(xPlayer.identifier))
-		return
+	if xPlayer and type(doorIndex) == 'number' and type(state) == 'boolean' and Config.DoorList[doorIndex] and isAuthorized(xPlayer.job.name, Config.DoorList[doorIndex]) then
+		doorState[doorIndex] = state
+		TriggerClientEvent('esx_doorlock:setDoorState', -1, doorIndex, state)
 	end
-
-	if not IsAuthorized(xPlayer.job.name, Config.DoorList[doorID]) then
-		print(('esx_doorlock: %s attempted to open a locked door!'):format(xPlayer.identifier))
-		return
-	end
-
-	-- make each door a table, and clean it when toggled
-	DoorInfo[doorID] = {}
-
-	-- assign information
-	DoorInfo[doorID].state = state
-	DoorInfo[doorID].doorID = doorID
-
-	TriggerClientEvent('esx_doorlock:setState', -1, doorID, state)
 end)
 
-ESX.RegisterServerCallback('esx_doorlock:getDoorInfo', function(source, cb)
-	cb(DoorInfo, #DoorInfo)
+ESX.RegisterServerCallback('esx_doorlock:getDoorState', function(source, cb)
+	cb(doorState)
 end)
 
-function IsAuthorized(jobName, doorID)
-	for i=1, #doorID.authorizedJobs, 1 do
-		if doorID.authorizedJobs[i] == jobName then
+function isAuthorized(jobName, doorObject)
+	for k,job in pairs(doorObject.authorizedJobs) do
+		if job == jobName then
 			return true
 		end
 	end
 
-	return true
+	return false
 end
-
-
 
 RegisterServerEvent('esx_doorlock:hack')
 AddEventHandler('esx_doorlock:hack', function(mycb)
@@ -52,7 +36,6 @@ AddEventHandler('esx_doorlock:hack', function(mycb)
 	
 	
 				if xPlayer.getInventoryItem('keycard').count >= 1 then
-				xPlayer.removeInventoryItem('keycard', 1)
 
 					TriggerClientEvent('esx_doorlock:currentlyhacking', source)
 	end
