@@ -9,23 +9,23 @@ version '1.0.0'
 
 
 client_scripts {
-  'client/cl.lua',
+  'client/main.lua',
   'config.lua',
-  	'@es_extended/locale.lua',
-	'locales/en.lua',
-	'locales/fr.lua',
-	'locales/sv.lua',
-	'locales/pl.lua'
+  '@es_extended/locale.lua',
+  'locales/en.lua',
+  'locales/fr.lua',
+  'locales/sv.lua',
+  'locales/pl.lua'
 }
 
 server_scripts {
-	'server/server.lua',
-		'@es_extended/locale.lua',
-	'locales/en.lua',
-	'locales/fr.lua',
-	'locales/sv.lua',
-	'locales/pl.lua',
-	'config.lua'
+  'server/server.lua',
+  '@es_extended/locale.lua',
+  'locales/en.lua',
+  'locales/fr.lua',
+  'locales/sv.lua',
+  'locales/pl.lua',
+  'config.lua'
 	
 } 
 
